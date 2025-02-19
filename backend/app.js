@@ -4,6 +4,8 @@ const express = require('express');
 const cors = require('cors');
 const database = require('./database');
 
+//http://waffle-test.onrender.com/
+
 const app = express();
 const PORT = 5000;
 
@@ -11,14 +13,22 @@ app.use(cors());
 app.use(express.json());
 
 app.post('/', (req, res) => {
-    console.log('fizeram uma requisição POST')
-    res.json({message: 'Requisição POST'})
+    console.log('fizeram uma requisição POST');
+    if(!req.body) {
+        console.log('Body não encontrado');
+        return res.json({message: 'Requisição POST. Body não encontrado'})
+    }
+    console.log('body:', req.body);
+    return res.json({message: 'Requisição POST', body: req.body})
 })
 
 app.get('/', (req, res) => {
+    const query = Object.entries(req.query).length > 0 ? req.query : undefined;
     console.log('alguem fez uma requisição GET');
+    if(query) console.log('query:', query);
     return res.json({
-        message: 'Requisição GET'
+        message: 'Requisição GET',
+        query
     })
 })
 
