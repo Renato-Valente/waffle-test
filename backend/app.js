@@ -18,17 +18,34 @@ app.post('/', (req, res) => {
         console.log('Body não encontrado');
         return res.json({message: 'Requisição POST. Body não encontrado'})
     }
-    console.log('body:', req.body);
-    return res.json({message: 'Requisição POST', body: req.body})
+    if(!database) {
+        console.log('problemas com o banco de dados');
+        return res.status(500).json({message: 'Problemas com o banco de dados'})
+    }
+    database.query('insert into teste (nome, idade) values (\'Post\', 13)', (err, result) => {
+        if(err){
+            console.log('erro ao inserir dados no banco');
+            return res.status(500).json({message: 'Problemas com o banco de dados'})
+        }
+        console.log('body:', req.body);
+        return res.json({message: 'Requisição POST', body: req.body})
+    })
 })
 
 app.get('/', (req, res) => {
     const query = Object.entries(req.query).length > 0 ? req.query : undefined;
     console.log('alguem fez uma requisição GET');
     if(query) console.log('query:', query);
-    return res.json({
-        message: 'Requisição GET',
-        query
+    if(!database) {
+        console.log('problemas com o banco de dados');
+        return res.status(500).json({message: 'Problemas com o banco de dados'})
+    }
+    database.query('insert into teste (nome, idade) values (\'Get\', 17)', (err, result) => {
+        if(err){
+            console.log('erro ao inserir dados no banco', err);
+            return res.status(500).json({message: 'Problemas com o banco de dados'})
+        }
+        return res.json({message: 'Requisição GET', query})
     })
 })
 
