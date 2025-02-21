@@ -12,108 +12,33 @@ const PORT = 5000;
 app.use(cors());
 app.use(express.json());
 
-app.post('/', (req, res) => {
-    console.log('fizeram uma requisição POST');
-    if(!req.body) {
-        console.log('Body não encontrado');
-        return res.json({message: 'Requisição POST. Body não encontrado'})
-    }
-    if(!database) {
-        console.log('problemas com o banco de dados');
-        return res.status(500).json({message: 'Problemas com o banco de dados'})
-    }
-    database.query('insert into teste (nome, idade) values (\'Post\', 13)', (err, result) => {
-        if(err){
-            console.log('erro ao inserir dados no banco');
-            return res.status(500).json({message: 'Problemas com o banco de dados'})
-        }
-        console.log('body:', req.body);
-        return res.json({message: 'Requisição POST', body: req.body})
-    })
-})
-
-app.get('/', (req, res) => {
-    const query = Object.entries(req.query).length > 0 ? req.query : undefined;
-    console.log('alguem fez uma requisição GET');
-    if(query) console.log('query:', query);
-    if(!database) {
-        console.log('problemas com o banco de dados');
-        return res.status(500).json({message: 'Problemas com o banco de dados'})
-    }
-    database.query('insert into teste (nome, idade) values (\'Get\', 17)', (err, result) => {
-        if(err){
-            console.log('erro ao inserir dados no banco', err);
-            return res.status(500).json({message: 'Problemas com o banco de dados'})
-        }
-        return res.json({message: 'Requisição GET', query})
-    })
-})
-
-/* app.get('/', (req, res) => {
-    if(!database) {
-        console.log('Erro na conexão com o banco de dados');
-        return res.status(500).json({message: 'Erro na conexão com o banco de dados'});
-    }
-    database.query('select * from teste', (err, result) => {
-        if(err){
-            console.log('Erro ao realizar query');
-            return res.status(500).json({
-                message: 'Erro ao realizar a query',
-                err: err
-            })
-        }
-
-        console.log(result);
-        return res.status(200).json(result);
-    })
-
-}) */
-
-/* app.post('/', (req, res) => {
-    if(!req.body) return res.status(500).json({
-        message: 'payload body não informado'
-    })
-    console.log(req.body);
-    return res.status(200).json(req.body);
-})
-
-app.post('/api/', (req, res) => {
-    if(!database) {
-        console.log('Erro de conexão com o banco de dados');
-        return res.status(500).json({
-            message: 'Erro de conexão com o banco de dados'
-        })
-    }
-
-    const {nome, idade}  = req.body;
-    if(!nome || !idade) {
-        console.log('valores de nome ou idade faltando');
-        return res.status(400).json({
-            error: 'valores de nome ou idade faltando'
-        })
-    }
-
-    const query = `insert into teste (nome, idade) values ('${nome}', ${idade})`;
-    database.query(query, (err, result) => {
-        if(err) {
-            console.log('Erro ao cadastrar dados no banco');
-            return res.status(500).json({
-                message:'erro ao cadastrar dados no banco',
-                err: err.message
-            });
-        }
-        console.log('dados cadastrados no banco com sucesso');
-        return res.status(200).json({message: 'dados cadastrados com sucesso'})
-    })
-})
-
-app.get('/', (req, res) => {
+app.post('/', async(req, res) => {
+    if(!database) return res.status(500).json({message: 'Erro com o banco de dados'});
+    const {email, id, utm_source, utm_medium, utm_campaign, utm_channel} = req.body;
+    if(!email || !id) return res.status(500).json({
+        message: 'Os campos email e id são necessarios'
+    });
+    const sourceText = utm_source ? `'${utm_source}'` : 'null';
+    const mediumText = utm_medium ? `'${utm_medium}'` : 'null';
+    const campaignText = utm_campaign ? `'${utm_campaign}'` : 'null';
+    const channelText = utm_channel ? `'${utm_channel}'` : 'null';
     
-    database.query('select * from teste', (err, result) => {
-        if(err) return res.status(500).json({error: err.message});
-        return res.status(200).json(result);
-    })
-}) */
+    const sql = `insert into news values ('${email}', '${id}', ${sourceText}, ${mediumText}, ${campaignText}, ${channelText})`;
+    const result = await database.query(sql);
+    if(!result) return res.status(500).json({message: 'Erro ao cadastrar dados no banco'});
+    return res.status(200).json({message:'Dados cadastrados com sucesso', ...req.body});
+})
+
+app.get('/', async(req, res) => {
+    if(!database) return res.status(500).json({message: 'Erro com o banco de dados'});
+    const { email } = req.query;
+    const result = email ?
+    await database.query(`select * from news where email = '${email}'`) :
+    await database.query('select * from news');
+
+    if(!result) return res.status(500).json({message: 'Erro ao procurar dados'});
+    return res.status(200).json(result.rows);
+})
 
 
 app.listen(PORT, () => {

@@ -1,22 +1,18 @@
-const mysql = require('mysql2');
+const { Pool } = require('pg');
 
-const connection = mysql.createConnection({
-    host:'ballast.proxy.rlwy.net',
-    user:'root',
-    port:'44697',
-    password:'CJACzYiuRQopSNVEQUzejabshBmROTly',
-    database:'railway'
-});
+const pool = new Pool({
+    host: 'dpg-curt0bofnakc73esion0-a.oregon-postgres.render.com',
+    port: '5432',
+    ssl: true,
+    database: 'waffle_test',
+    user: 'waffle_test_user',
+    password: 'HZDQhgAVe5GkycZBYBRLv3KNoKCo6tCI'
+})
 
-//mysql://root:CJACzYiuRQopSNVEQUzejabshBmROTly@ballast.proxy.rlwy.net:44697/railway
+//PGPASSWORD=HZDQhgAVe5GkycZBYBRLv3KNoKCo6tCI psql -h dpg-curt0bofnakc73esion0-a.oregon-postgres.render.com -U waffle_test_user waffle_test
 
-connection.connect((err) => {
-    if(err) {
-        console.log('erro ao conectar com o banco:', err);
-        return;
-    }
+pool.connect()
+.then(() => console.log("Conectado ao PostgreSQL!"))
+.catch((err) => console.error("Erro ao conectar ao banco:", err));
 
-    console.log('sucesso ao conectar com o banco:');
-});
-
-module.exports = connection;
+module.exports = pool;
