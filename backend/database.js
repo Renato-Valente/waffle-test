@@ -1,15 +1,14 @@
 const { Pool } = require('pg');
+require('dotenv').config();
 
 const pool = new Pool({
-    host: 'dpg-curt0bofnakc73esion0-a.oregon-postgres.render.com',
-    port: '5432',
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
     ssl: true,
-    database: 'waffle_test',
-    user: 'waffle_test_user',
-    password: 'HZDQhgAVe5GkycZBYBRLv3KNoKCo6tCI'
+    database: process.env.DB_NAME,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD
 })
-
-//PGPASSWORD=HZDQhgAVe5GkycZBYBRLv3KNoKCo6tCI psql -h dpg-curt0bofnakc73esion0-a.oregon-postgres.render.com -U waffle_test_user waffle_test
 
 pool.connect()
 .then(() => console.log("Conectado ao PostgreSQL!"))
