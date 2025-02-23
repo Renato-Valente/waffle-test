@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './login.css'
 
 const Login = () => {
@@ -9,6 +9,12 @@ const Login = () => {
 
     const emailRef = useRef<HTMLInputElement>(null);
     const senhaRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        if(!emailRef.current || !senhaRef.current) return;
+        setEmail(emailRef.current.value);
+        setSenha(senhaRef.current.value);
+    })
     
 
     const handleClick = async() => {
@@ -40,21 +46,27 @@ const Login = () => {
         if(senha != user.senha){
             senhaRef.current.style.border = '1px solid red';
             senhaRef.current.focus();
+            setLoading(false);
+            return;
         }
         setLoading(false);
+        //ir da pagina "/login" para a pagina "/"
+        window.location.href = window.location.href.slice(0, -5);
     }
 
 
     const handleEmail = () => {
-        if(!emailRef.current) return;
+        if(!emailRef.current || !senhaRef.current) return;
         //console.log(e.currentTarget.value);
         emailRef.current.style.border = '0px solid black';
+        senhaRef.current.style.border = '0px solid black';
         setEmail(emailRef.current.value);
     }
 
     const handleSenha = () => {
-        if(!senhaRef.current) return;
+        if(!senhaRef.current || !emailRef.current) return;
         senhaRef.current.style.border = '0px solid black';
+        emailRef.current.style.border = '0px solid black';
         setSenha(senhaRef.current.value);
     }
 
@@ -74,7 +86,7 @@ const Login = () => {
 
                     <div className="input">
                         <p>Senha</p>
-                        <input ref={senhaRef} onChange={handleSenha} type="email" name="" id="" />
+                        <input ref={senhaRef} onChange={handleSenha} type="password" name="" />
                     </div>
                 </div>
 
