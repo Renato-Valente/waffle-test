@@ -5,26 +5,47 @@ const Login = () => {
 
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const emailRef = useRef<HTMLInputElement>(null);
     const senhaRef = useRef<HTMLInputElement>(null);
+    
 
-    const handleClick = () => {
-        if(!emailRef.current) return;
-        if(email != 'renatinho') {
+    const handleClick = async() => {
+        if(!emailRef.current || !senhaRef.current) return;
+        setLoading(true);
+        emailRef.current.style.border = '0px solid black';
+        senhaRef.current.style.border = '0px solid black';
+
+
+        const data = await fetch('https://waffle-test.onrender.com/users');
+        if(!data.ok) {setLoading(false); return};
+        const list: {email:string, senha:string}[] = await data.json();
+        if(!list) {
+            setLoading(false);
+            return;
+        };
+        
+        const user = list.find((item) => {
+            return item.email == email;
+        })
+
+
+        if(!user) {
             emailRef.current.style.border = '1px solid red';
             emailRef.current.focus();
+            setLoading(false);
             return;
         }
-        if(senha != '1234'){
-            if(!senhaRef.current) return;
+        if(senha != user.senha){
             senhaRef.current.style.border = '1px solid red';
             senhaRef.current.focus();
         }
+        setLoading(false);
     }
 
 
-    const handleEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleEmail = () => {
         if(!emailRef.current) return;
         //console.log(e.currentTarget.value);
         emailRef.current.style.border = '0px solid black';
@@ -61,6 +82,7 @@ const Login = () => {
                     <button onClick={handleClick}>Entrar</button>
                 </div>
             </div>
+            <div style={{display: loading ? 'block' : 'none'}} className="loading-container"></div>
         </div>
     )
 }

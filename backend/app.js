@@ -53,6 +53,14 @@ app.get('/', async(req, res) => {
     return res.status(200).json(finalResult);
 })
 
+app.get('/users', async(req, res) => {
+    console.log('requisição Get /users')
+    if(!database) return res.status(500).json({message: 'Erro com o banco de dados'});
+    const result = await database.query('select * from users');
+    if(!result) return res.status(500).json({message: 'Erro ao procurar dados no banco'});
+    return res.status(200).json(result.rows);
+})
+
 
 app.listen(PORT, () => {
     console.log('servidor rodando');
