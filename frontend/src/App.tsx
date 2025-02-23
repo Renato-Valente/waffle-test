@@ -1,18 +1,19 @@
-import { useEffect, useState } from 'react'
-import './App.css'
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import Dashboard from "./pages/Dashboard";
+import Login from "./pages/Login";
 
-function App() {
-  
-  const [data, setData] = useState<{text:string}>();
+const App: React.FC = () => {
+    return (
+        <Router>
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/login" element={<Login />} />
+            </Routes>
+        </Router>
+    );
+};
 
-  useEffect(() => {
-    fetch('http://localhost:5000/').then((res) => res.json()).then((data) => setData(data));
-  }, [])
-  
-  if(!data) return;
-  return(
-    <h1>{data.text}</h1>
-  )
-}
-
-export default App
+export default App;
