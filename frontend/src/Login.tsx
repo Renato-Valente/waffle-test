@@ -1,3 +1,6 @@
+//import React from "react";
+import ReactDOM from "react-dom/client";
+
 import { useEffect, useRef, useState } from 'react';
 import './login.css'
 
@@ -100,3 +103,5 @@ const Login = () => {
 }
 
 export default Login;
+
+ReactDOM.createRoot(document.getElementById("root")!).render(<Login />);
