@@ -22,10 +22,8 @@ const Main = () => {
   useEffect(() => {
     
     (async() => {
-      console.log('ain, ')
       const email = sessionStorage.getItem('waffle_email');
       if(!email) {
-        console.log('saindo');
         sair();
         return;
       }
