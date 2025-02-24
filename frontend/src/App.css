@@ -24,14 +24,12 @@
 }
 
 .container{
-    border: 1px solid red;
     min-height: 600px;
 }
 
 .header {
     display: flex;
     justify-content: space-between;
-    border: 1px solid lime;
 }
 
 .streak {
@@ -76,6 +74,29 @@
     font-size: 18px;
 }
 
-/* .content p{
-    
-} */
+.cell{
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(0, 0, 0, 0.4);
+    font-size: 12px;
+    height: 80px;
+    width: 200px;
+    padding: 10px;
+    border-radius: 16px;
+    margin-top: 20px;   
+    justify-content: center;
+    color: whitesmoke;
+}
+
+.title {
+    height: 40%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.date {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

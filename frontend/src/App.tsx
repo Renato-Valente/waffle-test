@@ -62,9 +62,16 @@ const Main = () => {
 
         <div className="content">
           <h4>Últimas Leituras</h4>
-          {news && news.length > 0 ? news.map((item, index) => {
-            return <p key={index}>{item.titulo}</p>
-          }) :
+          {news && news.length > 0 ? 
+            <div>
+              {news.map((item, index) => {
+            return <div className='cell' key={index}>
+              <div className="title">{item.titulo.length > 27 ? `${item.titulo.slice(0, 23)}...` : item.titulo}</div>
+              <div className="date">{item.data}</div>
+            </div>
+          })}
+            </div>
+          :
             <div style={{
               height: '300px',
               width: '100%',
