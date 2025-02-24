@@ -1,4 +1,4 @@
-import './app.css'
+import './App.css'
 import fire from '../public/fire.svg'
 import { useEffect, useRef, useState } from 'react'
 
