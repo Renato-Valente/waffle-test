@@ -25,38 +25,46 @@ const Login = () => {
         setLoading(true);
         emailRef.current.style.border = '0px solid black';
         senhaRef.current.style.border = '0px solid black';
+        
+        fetch('https://waffle-test.onrender.com/users',{signal: AbortSignal.timeout(10000)}).then((response) => {
+            if(!response.ok){
+                setLoading(false);
+                return;
+            }
+            return response.json()
+        }).then((list) => {
+            const user = list.find((item:{email:string, senha:string}) => {
+                return item.email == email;
+            })
+    
+            if(!emailRef.current || !senhaRef.current) {
+                setLoading(false);
+                return;
+            }
 
+            if(!user) {
+                emailRef.current.style.border = '1px solid red';
+                emailRef.current.focus();
+                setLoading(false);
+                return;
+            }
+            if(senha != user.senha){
+                senhaRef.current.style.border = '1px solid red';
+                senhaRef.current.focus();
+                setLoading(false);
+                return;
+            }
 
-        const data = await fetch('https://waffle-test.onrender.com/users');
-        if(!data.ok) {setLoading(false); return};
-        const list: {email:string, senha:string}[] = await data.json();
-        if(!list) {
+            sessionStorage.setItem('waffle_email', email);
+            window.location.href = window.location.href.slice(0, -5);
+
+        }).catch(() => {
+            console.log('erro ao conectar com o banco');
             setLoading(false);
             return;
-        };
-        
-        const user = list.find((item) => {
-            return item.email == email;
         })
 
-
-        if(!user) {
-            emailRef.current.style.border = '1px solid red';
-            emailRef.current.focus();
-            setLoading(false);
-            return;
-        }
-        if(senha != user.senha){
-            senhaRef.current.style.border = '1px solid red';
-            senhaRef.current.focus();
-            setLoading(false);
-            return;
-        }
-        setLoading(false);
-        //ir da pagina "/login" para a pagina "/"
-        window.location.href = window.location.href.slice(0, -5);
     }
-
 
     const handleEmail = () => {
         if(!emailRef.current || !senhaRef.current) return;

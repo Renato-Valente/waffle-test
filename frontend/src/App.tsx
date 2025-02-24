@@ -1,35 +1,86 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import './app.css'
+import fire from '../public/fire.svg'
+import { useEffect, useRef, useState } from 'react'
 
-function App() {
-  const [count, setCount] = useState(0)
+const Main = () => {
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+  const sair = () => {
+    
+    if(window.location.href.includes('login')) return;
+    sessionStorage.removeItem('waffle_email');
+    window.location.href = `${window.location.href}login`; 
+  }
+
+  const [loading, setLoading] = useState(true);
+  const [news, setNews] = useState<{
+    email:string,
+    id:string, titulo:string, data:string
+  }[]>();
+
+  const blockerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    
+    (async() => {
+      console.log('ain, ')
+      const email = sessionStorage.getItem('waffle_email');
+      if(!email) {
+        console.log('saindo');
+        sair();
+        return;
+      }
+
+      fetch(`https://waffle-test.onrender.com/?email=${email}`, {signal: AbortSignal.timeout(10000)}).then((response) => {
+        if(!response.ok) {
+          sair();
+          return;
+        }
+        return response.json()
+      }).then((data) => {
+        console.log('chegamos')
+        setLoading(false);
+        setNews(data);
+      }).catch(() => {
+        sair();
+        return;
+      })
+      
+    })()
+
+  },[]);
+
+  return(
+    <div className="body">
+      <div className="container">
+        <div className="header">
+          <div className="streak">
+            <img src={fire} />
+            <p>Streak 5</p>
+          </div>
+          <button onClick={sair}>Sair</button>
+        </div>
+
+        <div className="content">
+          <h4>Últimas Leituras</h4>
+          {news && news.length > 0 ? news.map((item, index) => {
+            return <p key={index}>{item.titulo}</p>
+          }) :
+            <div style={{
+              height: '300px',
+              width: '100%',
+              display:'flex',
+              justifyContent:'center',
+              alignItems: 'center',
+              //backgroundColor:'red'
+            }}>
+              <p>Nenhuma Leitura</p>
+            </div>
+          }
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+      <div ref={blockerRef} style={{display: loading ? 'block' : 'none'}} className="blocker"></div>
+    </div>
   )
 }
 
-export default App
+export default Main;
