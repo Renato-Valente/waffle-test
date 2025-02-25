@@ -5,6 +5,8 @@ import { useEffect, useRef, useState } from 'react'
 
 const Main = () => {
 
+  const [streak, setStreak] = useState(0);
+
   const sair = () => {
     
     if(window.location.href.includes('login')) return;
@@ -36,8 +38,42 @@ const Main = () => {
         }
         return response.json()
       }).then((data) => {
-        console.log('chegamos')
         setLoading(false);
+        if(news) {
+          //console.log('news', news);
+          //extraindo o valor das datas
+          const dates: Date[] = [];
+          for(const item of news){
+            dates.push(new Date(item.data));
+          }
+          //organizar as datas em orderm crescente
+          for(let i = 0; i < dates.length; i++){
+            for(let j = i; j < dates.length; j++){
+              if(i == j) continue;
+              if(dates[i] > dates[j]) {
+                const temp = dates[i];
+                dates[i] = dates[j];
+                dates[j] = temp;
+              }
+            }
+          }
+          //calculando o valor de streak
+          let count = news.length > 0 ? 1 : 0;
+          for(let i = 0; i < dates.length - 1; i++){
+            if(dates[i] == dates[i+1]) continue;
+            const diff = dates[i+1].getTime() - dates[i].getTime(); //diferença em milisegundos
+            const days = diff / (1000 * 60 * 60 * 24); //diferença em dias
+            //mesmo dia
+            if(days == 0) continue;
+            if(days != 1) {
+              count = 1;
+              continue;
+            } 
+            count++;
+          }
+          setStreak(count);
+          return;
+        }
         setNews(data);
       }).catch(() => {
         sair();
@@ -46,7 +82,7 @@ const Main = () => {
       
     })()
 
-  },[]);
+  },[news]);
 
   return(
     <div className="body">
@@ -54,7 +90,7 @@ const Main = () => {
         <div className="header">
           <div className="streak">
             <img src={fire} />
-            <p>Streak 5</p>
+            <p>Streak {streak}</p>
           </div>
           <button onClick={sair}>Sair</button>
         </div>
@@ -63,7 +99,22 @@ const Main = () => {
           <h4>Últimas Leituras</h4>
           {news && news.length > 0 ? 
             <div>
-              {news.map((item, index) => {
+              {(() => {
+                //organizando os itens de news por data
+                const list = [...news];
+
+                for(let i = 0; i < list.length; i++){
+                  for(let j = i; j < list.length; j++){
+                    if(new Date(list[i].data) > new Date(list[j].data)){
+                      const temp = list[i];
+                      list[i] = list[j];
+                      list[j] = temp;
+                    }
+                  }
+                }
+                
+                return list;
+              })().reverse().map((item, index) => {
             return <div className='cell' key={index}>
               <div className="title">{item.titulo.length > 27 ? `${item.titulo.slice(0, 23)}...` : item.titulo}</div>
               <div className="date">{item.data}</div>
