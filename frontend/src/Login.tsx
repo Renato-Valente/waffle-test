@@ -1,5 +1,6 @@
 //import React from "react";
 import ReactDOM from "react-dom/client";
+import loading_icon from '../public/loading.svg'
 
 import { useEffect, useRef, useState } from 'react';
 import './login.css'
@@ -105,7 +106,12 @@ const Login = () => {
                     <button onClick={handleClick}>Entrar</button>
                 </div>
             </div>
-            <div style={{display: loading ? 'block' : 'none'}} className="loading-container"></div>
+            <div style={{display: loading ? 'flex' : 'none'}} className="loading-container">
+                <div className="loading">
+                    <img src={loading_icon} />
+                    <p>Carregando...</p>
+                </div>
+            </div>
         </div>
     )
 }
