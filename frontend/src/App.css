@@ -13,19 +13,29 @@
     padding: 30px;
 }
 
+.container{
+    min-height: 600px;
+    max-width: 500px;
+    margin: 0 auto;
+}
 .blocker {
     position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: #FFCE04;
+    background-color: #615A5A;
     /* display: none; */
 }
-
-.container{
-    min-height: 600px;
+.blocker img {
+    width: 400px;
+    max-width: 80vw;
+    height: auto;
 }
+
 
 .header {
     display: flex;
@@ -59,6 +69,8 @@
 .content{
     background-color: rgba(0,0,0,0.4);
     min-height: 450px;
+    max-height: 80vh;
+    overflow: auto;
     width: 100%;
     margin-top: 40px;
     border-radius: 16px;
@@ -80,7 +92,7 @@
     background-color: rgba(0, 0, 0, 0.4);
     font-size: 12px;
     height: 80px;
-    width: 200px;
+    width: 250px;
     padding: 10px;
     border-radius: 16px;
     margin-top: 20px;   

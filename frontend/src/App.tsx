@@ -1,5 +1,6 @@
 import './App.css'
 import fire from '../public/fire.svg'
+import logo from '../public/logo.avif'
 import { useEffect, useRef, useState } from 'react'
 
 const Main = () => {
@@ -83,7 +84,9 @@ const Main = () => {
           }
         </div>
       </div>
-      <div ref={blockerRef} style={{display: loading ? 'block' : 'none'}} className="blocker"></div>
+      <div ref={blockerRef} style={{display: loading ? 'flex' : 'none'}} className="blocker">
+          <img src={logo} />
+      </div>
     </div>
   )
 }
